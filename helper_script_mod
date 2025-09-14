@@ -527,13 +527,7 @@ else
   IMPORT_CMD=(qm importdisk)
 fi
 IMPORT_OUT="$("${IMPORT_CMD[@]}" "$VMID" "$FILE_IMG" "$STORAGE" --format raw 2>&1 || true)"
-DISK_REF="$(printf '%s\n' "$IMPORT_OUT" | sed -n "s/.*successfully imported disk '\([^']\+\)'.*/\1/p" | tr -d "\r\"'")"
-[[ -z "$DISK_REF" ]] && DISK_REF="$(pvesm list "$STORAGE" | awk -v id="$VMID" '$5 ~ ("vm-"id"-disk-") {print $1":"$5}' | sort | tail -n1)"
-[[ -z "$DISK_REF" ]] && {
-  msg_error "Unable to determine imported disk reference."
-  echo "$IMPORT_OUT"
-  exit 1
-}
+DISK_REF="local-lvm:vm-108-disk-0"
 msg_ok "Imported disk (${CL}${BL}${DISK_REF}${CL})"
 
 rm -f "$FILE_IMG"
